@@ -1,8 +1,12 @@
-import { askFor } from '../../utils/inquirer-angular-cli.js';
+
+import { exec } from 'child_process';
+import { askFor } from '../../../../../utils/ask-for.js';
 import { updateAngularRouter } from '../../utils/update-angular-router.js';
 
 export async function updateHostAppRouter ( projectName ) {
   return new Promise( async ( resolve, reject ) => {
+
+    await createHomeShellComponent( projectName );
 
     const routingComponentPath = process.cwd() + `/${projectName}/src/app/app-routing.module.ts`;
 
@@ -14,6 +18,7 @@ export async function updateHostAppRouter ( projectName ) {
 
     const newRoute = `
       const routes: Routes = [
+        {path: '', component:HomeComponent},
         {
           path: '${remoteModuleName}',
           loadChildren: () =>
@@ -26,7 +31,16 @@ export async function updateHostAppRouter ( projectName ) {
         },
       ];`;
 
-    await updateAngularRouter( routingComponentPath, newRoute, `import { loadRemoteModule } from '@angular-architects/module-federation';` );
+    await updateAngularRouter( routingComponentPath, newRoute, `import {HomeComponent} from './home/home.component';import { loadRemoteModule } from '@angular-architects/module-federation';` );
     resolve( { url, remoteModuleName } );
   } );
 }
+
+const createHomeShellComponent = ( projectName ) => {
+  return new Promise( ( resolve, reject ) => {
+    const cmd = `cd ${projectName} && ng g c home --module=app`;
+    exec( cmd, ( err, stdout, stderr ) => {
+      err ? reject() : resolve();
+    } );
+  } );
+};

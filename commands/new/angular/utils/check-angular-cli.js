@@ -1,11 +1,13 @@
 import { exec } from 'child_process';
-import { askFor } from './inquirer-angular-cli.js';
+import { askFor } from '../../../../utils/ask-for.js';
+import spinner from '../../../../utils/spinner.js';
 export const MINIMUM_VERSION_ANGULAR_CLI = 12;
 
 export function installAngularCli () {
   return new Promise( ( resolve, reject ) => {
-    console.log( 'Installing @angular/cli...' );
+    spinner.start( 'Installing @angular/cli...' );
     exec( 'npm -g i @angular/cli', ( err, stdout, stderr ) => {
+      spinner.stop();
       err ? reject() : resolve( Number( stdout.match( /\d+.\d+.\d+/ )[0].split( '.' )[0] ) );
     } );
   } );
@@ -13,8 +15,9 @@ export function installAngularCli () {
 
 export function updateAngularCli () {
   return new Promise( ( resolve, reject ) => {
-    console.log( 'Updating @angular/cli...' );
+    spinner.start( 'Updating @angular/cli...' );
     exec( 'ng update', ( err, stdout, stderr ) => {
+      spinner.stop();
       resolve();
     } );
   } );
@@ -22,10 +25,12 @@ export function updateAngularCli () {
 
 export function checkAngularCliVersion ( stdout ) {
   return new Promise( ( resolve, reject ) => {
-    console.log( 'Checking @angular/cli...' );
+
+    spinner.start( 'Checking @angular/cli...' );
     exec( 'ng v', async ( err, stdout, stderr ) => {
       if ( err ) return reject( err );
       const version = Number( stdout.match( /Angular CLI: (\d+.\d+.\d+)/ )[1].split( '.' )[0] );
+      spinner.stop();
       return resolve( version );
     } );
   } );

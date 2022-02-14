@@ -1,12 +1,14 @@
 import { exec } from 'child_process';
-import { askFor } from '../utils/inquirer-angular-cli.js';
+import spinner from '../../../../utils/spinner.js';
 
-export function addModuleFederation ( projectName ) {
+export function addModuleFederation ( projectName, port ) {
   return new Promise( async ( resolve, reject ) => {
-    const port = await askFor( 'port', `In which port will be deployed ${projectName}?`, 'input', [] );
-    console.log( `Creating webpack module federation for: ${projectName}...` );
+
+    spinner.start( `Creating webpack module federation for: ${projectName}...`, 'green' );
+
     exec( `cd ${projectName} && ng add @angular-architects/module-federation --project ${projectName} --port ${port} --skip-confirmation`, ( err, stdout, stderr ) => {
-      err ? reject() : resolve( port );
+      spinner.stop();
+      err ? reject() : resolve();
     } );
   } );
 }

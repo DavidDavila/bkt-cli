@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import { readFileSync } from 'fs';
+import { askFor } from '../../../../../utils/ask-for.js';
 import { writeLocalFile } from '../../../../../utils/files.js';
-import { askFor } from '../../utils/inquirer-angular-cli.js';
 
 export function addRemoteModule ( projectName ) {
   return new Promise( async ( resolve, reject ) => {
@@ -25,7 +25,7 @@ export function addRemoteModule ( projectName ) {
   } );
 }
 
-function createModuleAndComponent ( projectName, moduleName ) {
+export function createModuleAndComponent ( projectName, moduleName ) {
   return new Promise( ( resolve, reject ) => {
     const cmd = `cd ${projectName} && ng g m ${moduleName} --routing && ng g c ${moduleName} --module=${moduleName}`;
     exec( cmd, ( err, stdout, stderr ) => {
